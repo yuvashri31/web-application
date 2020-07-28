@@ -1,0 +1,59 @@
+// frontend/src/App.js
+<MessageList Message={this._buildMessageEncrypted}/>
+
+// frontend/src/App.js
+_buildMessageEncrypted = (props) => {
+  const newProps = {
+    ...props,
+    sender: this.state.sender,
+    receiver: this.state.receiver,
+    virgil: this.state.virgil
+  };
+  return <MessageEncrypted {...newProps}/>
+};
+
+// frontend/src/MessageEncrypted.js
+export class MessageEncrypted extends PureComponent {
+  _isMounted = false;
+
+  constructor(props) {
+    super(props);
+    this.state = { decryptedText: null };
+  }
+
+  componentDidMount = () => {
+    this._isMounted = true;
+    this._decryptText()
+      .then(
+        (decryptedText) => {
+          if (this._isMounted) {
+            this.setState({ decryptedText });
+          }
+        }
+      );
+  };
+
+  componentWillUnmount = () => {
+    this._isMounted = false;
+  };
+
+  _decryptText = async () => {
+    const messageCreator = this.props.isMyMessage(this.props.message) ? this.props.sender : 'chatbot';
+    return this.props.virgil.eThree.decrypt(
+      this.props.message.text,
+      this.props.virgil.publicKeys[messageCreator]
+    );
+  };
+
+  render = () => {
+    const newProps = {
+      ...this.props,
+      message: {
+        ...this.props.message,
+        text: this.state.decryptedText || ""
+      }
+    };
+
+    return <MessageSimple {...newProps} />
+  }
+}

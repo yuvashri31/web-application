@@ -1,0 +1,4 @@
+// frontend/src/StartChat.js
+post("http://localhost:8080/v1/authenticate", { sender: this.state.sender })
+  .then(res => res.authToken)
+  .then(this._connect);

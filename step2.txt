@@ -1,0 +1,52 @@
+// backend/src/controllers/v1/stream-credentials.js
+import { chat } from '../../stream';
+
+exports.streamCredentials = async (req, res) => {
+try {
+    const data = req.body;
+
+    const user = Object.assign({}, data, {
+    id: req.user.sender,
+    role: 'user',
+    image: `https://robohash.org/${req.user.sender}`,
+    });
+
+    const token = chat.createToken(user.id);
+    await chat.updateUsers([user]);
+
+    res.status(200).json({ user, token, apiKey: process.env.STREAM_API_KEY });
+} catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+}
+};
+The response payload has this shape:
+{
+    "apiKey": "<string>",
+    "token": "<string>",
+    "user": {
+        "id": "<string>",
+        "role": "<string>",
+        "image": "<string>"
+    }
+} 
+// backend/src/virgil.js
+const virgilCrypto = new VirgilCrypto();
+
+const generator = new JwtGenerator({
+appId: process.env.VIRGIL_APP_ID,
+apiKeyId: process.env.VIRGIL_KEY_ID,
+apiKey: virgilCrypto.importPrivateKey(process.env.VIRGIL_PRIVATE_KEY),
+accessTokenSigner: new VirgilAccessTokenSigner(virgilCrypto)
+});
+
+exports.virgilToken = (user) => generator.generateToken(user);
+
+// backend/src/controllers/v1/virgil-credentials.js
+import { virgilToken } from '../../virgil';
+
+exports.virgilCredentials = (req, res) => {
+const virgilJwtToken = virgilToken(req.user.sender);
+
+res.json({ token: virgilJwtToken.toString() });
+};

@@ -1,0 +1,5 @@
+// frontend/src/StartChat.js
+const response = await post("http://localhost:8080/v1/stream-credentials", {}, backendAuthToken);
+
+const client = new StreamChat(response.apiKey);
+client.setUser(response.user, response.token);

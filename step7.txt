@@ -1,0 +1,6 @@
+/ frontend/src/StartChat.js
+const publicKeys = await this.state.virgil.eThree.lookupPublicKeys([this.state.sender, 'chatbot']);
+{
+  will: {/* Public Key Info */},
+  chatbot: {/* Public Key Info */}
+}

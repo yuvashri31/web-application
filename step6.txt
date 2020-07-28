@@ -1,0 +1,6 @@
+// frontend/src/StartChat.js
+const channel = this.state.stream.client.channel('team', `${this.state.sender}-chatbot`, {
+  image: `https://getstream.io/random_svg/?id=rapid-recipe-0&name=${this.state.sender}`,
+  name: this.state.sender,
+  members: [this.state.sender, 'chatbot'],
+});

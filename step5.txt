@@ -1,0 +1,4 @@
+// frontend/src/StartChat.js
+const response = await post("http://localhost:8080/v1/virgil-credentials", {}, backendAuthToken);
+const eThree = await EThree.initialize(() => response.token);
+await eThree.register();

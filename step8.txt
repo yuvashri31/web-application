@@ -1,0 +1,32 @@
+// frontend/src/App.js
+<Chat client={this.state.stream.client} theme={'messaging light'}>
+  <Channel channel={this.state.stream.channel}>
+    <Window>
+      <ChannelHeader/>
+      <MessageList Message={this._buildMessageEncrypted}/>
+      <MessageInputEncrypted virgil={this.state.virgil} channel={this.state.stream.channel}/>
+    </Window>
+    <Thread/>
+  </Channel>
+</Chat>
+
+// frontend/src/MessageInputEncrypted.js
+export class MessageInputEncrypted extends PureComponent {
+  sendMessageEncrypted = async (data) => {
+    const encryptedText = await this.props.virgil.eThree.encrypt(data.text, this.props.virgil.publicKeys);
+    await this.props.channel.sendMessage({
+      ...data,
+      text: encryptedText
+    });
+  };
+
+  render = () => {
+    const newProps = {
+      ...this.props,
+      sendMessage: this.sendMessageEncrypted
+    };
+
+    return <MessageInput {...newProps} />
+  }
+}
+
